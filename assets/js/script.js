@@ -5,6 +5,7 @@ var choices = document.querySelector(".choices");
 var intro = document.querySelector("#intro");
 var evaluation = document.querySelector("#evaluation");
 var timeLeft = document.querySelector("#timer");
+var questionContainer = document.querySelector(".container");
 
 var score = 0;
 var questions = [
@@ -42,7 +43,7 @@ var penaltySeconds = 10;
 function countdown(){
     var timerInterval = setInterval(function(){
         secondsLeft--;
-        timeLeft.extContent = "Time left: " + seconsLeft + " s";
+        timeLeft.textContent = "Time left: " + secondsLeft + " s";
         if (secondsLeft <=0){
             clearInterval(timerInterval);
             timeLeft.textContent = "Time's up!";
@@ -60,25 +61,6 @@ function startQuiz(){
 }
 startBtn.addEventListener("click", startQuiz)
 
-
-// function startQuiz () {
-//     // hide the main SpeechRecognitionResult
-//     // start TimeRanges
-//     // time text 
-//     // getquestion   
-//     //         li.onclcick = clickedQuestion
-//     //    }
-//     //    li.textContent = questions[i].choices;
-//     //    choices.appendChild(ul);
-//     //    ul.appendChild (li);
-//     // }
-//     // function clickedQuestion(){
-//     //     // check if answerwer is right or qwrong
-//     //     // udpate time if wrong
-//     //     // check if you have run out of questions;
-//     //     // increase questionindex
-// }
-
 function createQuestion(){
     intro.innerHTML = " ";
     
@@ -90,29 +72,91 @@ function createQuestion(){
     lis.forEach(function(element, index){
         element.textContent = questions[questionNumber].choices[index];
         element.setAttribute("id", "options");
-        
-        element.addEventListener("click", function(event){
-            var userChoice = event.target;
-            
-            if(questions[questionNumber].answer == userChoice.textContent) {
-                evaluation.textContent = "Correct!"
-                questionNumber++;
-                createQuestion();
-            } 
-    });
+        clickedQuestion(element);
 });
+
+
 }
-// function clickedQuestion(){
+function clickedQuestion (element, index){
+    if (questionNumber == 0) {
+    element.addEventListener("click", function(event){
+        var userChoice = event.target;
+    if(questions[questionNumber].answer == userChoice.textContent) {
+            score++;
+            evaluation.textContent = "Correct!"
+            
+    } else{
+            secondsLeft = secondsLeft - penaltySeconds;
+            evaluation.textContent = "Wrong!";
+    };
+        questionNumber++;
+        if (questionNumber >= questions.length){
+            gameOver();
+        } else {
+        titleDiv.textContent = questions[questionNumber].title;
+        var lis = document.querySelectorAll(".options");
+        lis.forEach(function(element, index){
+            element.textContent = questions[questionNumber].choices[index];
+            element.setAttribute("id", "options");
+            clickedQuestion(element);
+            });
+        };
+        });
+    };
+}
+function gameOver(){
+    questionContainer.innerHTML = "";
+    timeLeft.style.display = "none";
+    if (secondsLeft >= 0){
+        var finalScore = secondsLeft;
+    var newP = document.createElement("p");
+    newP.setAttribute ("class", "final-score");
+    newP.textContent = "All done! Your final score is: " + finalScore;
+    questionContainer.appendChild(newP);
+    }
+
+    var enterInitials = document.createElement("label");
+    enterInitials.setAttribute("class", "initials");
+    enterInitials.textContent = "Enter your initials: ";
+    questionContainer.appendChild(enterInitials);
+
+    var input = document.createElement("input");
+    input.setAttribute("type", "text");
+    input.setAttribute("class","initials-field");
+    input.textContent = "";
+    questionContainer.appendChild(input);
+
+    var submitBtn = document.createElement("button");
+    submitBtn.setAttribute("type","submit");
+    submitBtn.setAttribute("class", "submit-button");
+    submitBtn.textContent = "Submit";
+    questionContainer.appendChild(submitBtn);
+
     
-//         if(questions[questionNumber].answer == index) {
-//             questionNumber++;
-//            console.log("Correct!");
-//         } else {
-//             console.log("Wrong!");
-//         }
-//     });
-// }
-// function init(){
-//     createQuestion();
-//     clickedQuestion();
-// }
+    submitBtn.addEventListener("click", function(){
+    var initials = input.value;
+    if (initials === null) {
+        alert("Please enter your initials")
+    } else {
+        var finalResult = {
+            initials: initials,
+            score: finalScore,
+        }
+        console.log(finalResult);
+        var allScores = JSON.parse(localStorage.getItem("allScores")) || [];
+        // if (allScores === null){
+        //     allScores = [];
+        // } else{
+        //     allScores = JSON.parse(allScores);
+        // }
+        allScores.push(finalResult);
+        // var newResult = JSON.stringify(allScores);
+        // console.log(newResult);
+        localStorage.setItem("allScores","newResult");
+        window.location.href = "scores.html"
+    }
+    });
+}
+
+
+
