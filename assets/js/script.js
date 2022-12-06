@@ -1,4 +1,10 @@
-var startBtn = document.querySelector("strtBtn");
+var titleDiv = document.querySelector ("#title");
+var ul = document.querySelector ("#list");
+var startBtn = document.querySelector("#strtBtn");
+var choices = document.querySelector(".choices");
+var intro = document.querySelector("#intro");
+var evaluation = document.querySelector("#evaluation");
+var timeLeft = document.querySelector("#timer");
 
 var score = 0;
 var questions = [
@@ -29,8 +35,84 @@ var questions = [
     },
 
 ];
+var questionNumber = 0
+var secondsLeft = 76;
+var penaltySeconds = 10;
 
-startBtn.addEventListener("click", function(){
+function countdown(){
+    var timerInterval = setInterval(function(){
+        secondsLeft--;
+        timeLeft.extContent = "Time left: " + seconsLeft + " s";
+        if (secondsLeft <=0){
+            clearInterval(timerInterval);
+            timeLeft.textContent = "Time's up!";
+            gameOver(); // not defined
+        } else if(questionNumber >= questions.length + 1){
+            clearInterval(timerInterval);
+            gameOver() //not defined
+        }
+    }, 1000)
+}
 
-})
+function startQuiz(){
+    countdown();
+    createQuestion();
+}
+startBtn.addEventListener("click", startQuiz)
 
+
+// function startQuiz () {
+//     // hide the main SpeechRecognitionResult
+//     // start TimeRanges
+//     // time text 
+//     // getquestion   
+//     //         li.onclcick = clickedQuestion
+//     //    }
+//     //    li.textContent = questions[i].choices;
+//     //    choices.appendChild(ul);
+//     //    ul.appendChild (li);
+//     // }
+//     // function clickedQuestion(){
+//     //     // check if answerwer is right or qwrong
+//     //     // udpate time if wrong
+//     //     // check if you have run out of questions;
+//     //     // increase questionindex
+// }
+
+function createQuestion(){
+    intro.innerHTML = " ";
+    
+    startBtn.setAttribute('class', "strtBtn");
+    titleDiv.textContent = questions[questionNumber].title;
+    
+    var lis = document.querySelectorAll(".options");
+    
+    lis.forEach(function(element, index){
+        element.textContent = questions[questionNumber].choices[index];
+        element.setAttribute("id", "options");
+        
+        element.addEventListener("click", function(event){
+            var userChoice = event.target;
+            
+            if(questions[questionNumber].answer == userChoice.textContent) {
+                evaluation.textContent = "Correct!"
+                questionNumber++;
+                createQuestion();
+            } 
+    });
+});
+}
+// function clickedQuestion(){
+    
+//         if(questions[questionNumber].answer == index) {
+//             questionNumber++;
+//            console.log("Correct!");
+//         } else {
+//             console.log("Wrong!");
+//         }
+//     });
+// }
+// function init(){
+//     createQuestion();
+//     clickedQuestion();
+// }
