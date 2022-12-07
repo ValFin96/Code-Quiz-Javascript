@@ -7,6 +7,7 @@ var evaluation = document.querySelector("#evaluation");
 var timeLeft = document.querySelector("#timer");
 var questionContainer = document.querySelector(".container");
 
+
 var score = 0;
 var questions = [
     {
@@ -36,10 +37,21 @@ var questions = [
     },
 
 ];
+// Declare variables for question index and timer variables
 var questionNumber = 0
 var secondsLeft = 76;
 var penaltySeconds = 10;
 
+// Function that calls all other functions in it
+function startQuiz(){
+    countdown();
+    createQuestion();
+};
+
+// Attach the main function to teh button
+startBtn.addEventListener("click", startQuiz)
+
+// Set the countdown 
 function countdown(){
     var timerInterval = setInterval(function(){
         secondsLeft--;
@@ -47,20 +59,15 @@ function countdown(){
         if (secondsLeft <=0){
             clearInterval(timerInterval);
             timeLeft.textContent = "Time's up!";
-            gameOver(); // not defined
+            gameOver(); 
         } else if(questionNumber >= questions.length + 1){
             clearInterval(timerInterval);
-            gameOver() //not defined
+            gameOver() 
         }
     }, 1000)
 }
 
-function startQuiz(){
-    countdown();
-    createQuestion();
-}
-startBtn.addEventListener("click", startQuiz)
-
+// This function displays a question for the user and multiple optios via a for loop
 function createQuestion(){
     intro.innerHTML = " ";
     
@@ -74,9 +81,9 @@ function createQuestion(){
         element.setAttribute("id", "options");
         clickedQuestion(element);
 });
-
-
 }
+
+// Function that determines what happens after a user clciked on a question
 function clickedQuestion (element, index){
     if (questionNumber == 0) {
     element.addEventListener("click", function(event){
@@ -84,12 +91,18 @@ function clickedQuestion (element, index){
     if(questions[questionNumber].answer == userChoice.textContent) {
             score++;
             evaluation.textContent = "Correct!"
+            evaluation.style.display = "block";
             
     } else{
             secondsLeft = secondsLeft - penaltySeconds;
             evaluation.textContent = "Wrong!";
+            evaluation.style.display = "block";
     };
         questionNumber++;
+        
+        console.log(questionNumber);
+        console.log(questionNumber-1);
+       
         if (questionNumber >= questions.length){
             gameOver();
         } else {
@@ -104,6 +117,8 @@ function clickedQuestion (element, index){
         });
     };
 }
+
+//Once the user reaches the end, display the score and store the result
 function gameOver(){
     questionContainer.innerHTML = "";
     timeLeft.style.display = "none";
@@ -132,31 +147,21 @@ function gameOver(){
     submitBtn.textContent = "Submit";
     questionContainer.appendChild(submitBtn);
 
-    
+// Attach an even listener to submit button next to initials input. Store the result in a local storage
     submitBtn.addEventListener("click", function(){
     var initials = input.value;
-    if (initials === null) {
+    if (!initials) {
         alert("Please enter your initials")
     } else {
         var finalResult = {
             initials: initials,
             score: finalScore,
-        }
-        console.log(finalResult);
-        var allScores = JSON.parse(localStorage.getItem("allScores")) || [];
-        // if (allScores === null){
-        //     allScores = [];
-        // } else{
-        //     allScores = JSON.parse(allScores);
-        // }
+        };
+        var allScores = JSON.parse(window.localStorage.getItem("allScores")) || [];
         allScores.push(finalResult);
-        // var newResult = JSON.stringify(allScores);
-        // console.log(newResult);
-        localStorage.setItem("allScores","newResult");
-        window.location.href = "scores.html"
+        localStorage.setItem("allScores",JSON.stringify(allScores));
+        // move on to the next page to see a scoreboard
+        window.location.href = "scores.html" 
     }
     });
 }
-
-
-
