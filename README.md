@@ -5,7 +5,7 @@ This is a timed coding quiz with multiple-choice questions. This app runs in the
 
 * [Github Repository](https://github.com/ValFin96/Code-Quiz-Javascript)
 
-* [Deployed Application Link]()
+* [Deployed Application Link](https://valfin96.github.io/Code-Quiz-Javascript/)
 
 ## Prerequisites
 To install the application, you will need any text editor.
